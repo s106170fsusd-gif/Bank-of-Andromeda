@@ -28,7 +28,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 *{box-sizing:border-box}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--nebula);outline-offset:2px}
-.app{position:fixed;top:env(safe-area-inset-top,0px);bottom:0;left:0;right:0;max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+.app{position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;padding-top:env(safe-area-inset-top,0px);max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+.app>.screen{background:var(--bg)}
 .screen{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:96px}
 .pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .num{font-family:var(--display);font-variant-numeric:tabular-nums}
@@ -161,7 +162,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<style>body{margin:0;font-size:14px}</style>
+<style>:root{padding:0!important}body{margin:0;font-size:14px}</style>
 </head>
 <body>
 <div class="app" id="app">
@@ -384,6 +385,7 @@ function stars(){
   let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
   for(let i=0;i<70;i++){x.fillStyle=`rgba(255,255,255,${.25+rnd()*.6})`;x.beginPath();x.arc(rnd()*r.width,rnd()*r.height,rnd()*1.3+.2,0,7);x.fill()}
 }
+try{if(navigator.standalone||matchMedia("(display-mode: standalone)").matches){const fit=()=>{document.getElementById("app").style.height=Math.max(screen.height,innerHeight)+"px"};fit();addEventListener("resize",fit)}}catch(e){}
 render();
 </script>
 
