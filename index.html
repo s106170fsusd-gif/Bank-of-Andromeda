@@ -28,7 +28,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 *{box-sizing:border-box}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--nebula);outline-offset:2px}
-.app{position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;padding-top:env(safe-area-inset-top,0px);max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+.app{position:fixed;top:0;left:0;right:0;bottom:0;padding-top:env(safe-area-inset-top,0px);max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
 .app>.screen{background:var(--bg)}
 .screen{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:96px}
 .pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -90,7 +90,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .tx+.tx{border-top:1px solid var(--line)}
 .tx .ic{width:38px;height:38px;border-radius:12px;background:var(--bg);display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:14px;color:var(--sky-2);flex:none}
 .tx .mid{flex:1;min-width:0}
-.tx .mid div{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx .mid div{font-weight:600;font-size:14px;overflow-wrap:anywhere;line-height:1.3}
+.app.short .tabs{padding-bottom:0}
+.more{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;padding:16px;border-top:1px solid var(--line);font-weight:600;font-size:14px;color:var(--sky-2)}
+.spin{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--muted);animation:sp .9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 .tx .mid small{color:var(--muted);font-size:12px}
 .tx .a{font-weight:600;font-size:14px}
 .tx .a.in{color:var(--pos)}
@@ -219,6 +223,9 @@ const total=ACCTS.filter(a=>!a.credit).reduce((s,a)=>s+a.bal,0);
 
 function txRows(list){return list.map(t=>`<div class="tx"><div class="ic">${t.m[0]}</div><div class="mid"><div>${t.m}${t.p?'<span class="pending">Pending</span>':''}</div><small>${t.d}</small></div><div class="a num ${t.a>0?'in':''}">${hide?'••••':money(t.a,true)}</div></div>`).join("")}
 
+function moreRow(){return `<button class="more" onclick="loadMore(this)">Show more transactions</button>`}
+function loadMore(b){if(b.dataset.on)return;b.dataset.on=1;b.disabled=true;b.innerHTML='<span class="spin" role="status" aria-label="Loading"></span>';}
+scr.addEventListener("scroll",()=>{const b=scr.querySelector(".more");if(b&&scr.scrollTop+scr.clientHeight>scr.scrollHeight-40)loadMore(b)});
 function subHeader(title){return `<div class="sub-hero pad"><button class="back" aria-label="Back" onclick="goBack()">${svg("back")}</button><h1>${title}</h1></div>`}
 
 const VIEWS={
@@ -246,7 +253,7 @@ const VIEWS={
    <div class="num" style="font-size:32px;font-weight:700;margin-top:4px">${show(a.bal)}</div>
    <div style="color:var(--muted);font-size:13px;margin-top:6px">${a.credit?`Credit limit ${money(a.limit)} · Payment due Nov 21`:`Account ••${a.mask}`}</div>
   </div>
-  <div class="sec"><h2>Recent transactions</h2><div class="card">${txRows(TX[id])}</div></div></div>`;
+  <div class="sec"><h2>Recent transactions</h2><div class="card">${txRows(TX[id])}${moreRow()}</div></div></div>`;
  },
  pay(){
   return `<div class="sub-hero pad"><h1>Pay &amp; Transfer</h1></div><div class="pad">
@@ -300,7 +307,7 @@ const VIEWS={
     <div style="height:8px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:100%;height:100%;background:var(--pos)"></div></div>
     <div style="display:flex;gap:14px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap"><span>2 deposits from TPE</span><span>Bank fees $20.00</span><span>Apple purchases $7.98</span></div>
    </div>
-   <div class="sec"><h2>Recent transactions</h2><div class="card">${txRows(all)}</div></div></div>`;
+   <div class="sec"><h2>Recent transactions</h2><div class="card">${txRows(all)}${moreRow()}</div></div></div>`;
  },
  menu(){
   return `<div class="sub-hero pad"><h1>Profile</h1></div><div class="pad">
@@ -385,7 +392,7 @@ function stars(){
   let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
   for(let i=0;i<70;i++){x.fillStyle=`rgba(255,255,255,${.25+rnd()*.6})`;x.beginPath();x.arc(rnd()*r.width,rnd()*r.height,rnd()*1.3+.2,0,7);x.fill()}
 }
-try{if(navigator.standalone||matchMedia("(display-mode: standalone)").matches){const fit=()=>{document.getElementById("app").style.height=Math.max(screen.height,innerHeight)+"px"};fit();addEventListener("resize",fit)}}catch(e){}
+try{if(navigator.standalone||matchMedia("(display-mode: standalone)").matches){const fit=()=>{document.getElementById("app").classList.toggle("short",innerHeight<screen.height-20)};fit();addEventListener("resize",fit)}}catch(e){}
 render();
 </script>
 
