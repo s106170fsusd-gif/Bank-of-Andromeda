@@ -22,8 +22,8 @@
   --body:"Figtree",ui-sans-serif,system-ui,-apple-system,sans-serif;
   color-scheme:light;
 }
-html,body{height:100%}
-body{background:var(--sky);color:var(--ink);font-family:var(--body);-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+html,body{height:100%;background:linear-gradient(var(--sky) 50%,var(--card) 50%)}
+body{color:var(--ink);font-family:var(--body);-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sky)}
 *{box-sizing:border-box}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
@@ -176,9 +176,10 @@ const ACCTS=[
 ];
 const TX={
  chk:[
-  {d:"Nov 3",m:"App Store",c:"Apps",a:-4.99},
+  {d:"Nov 3",m:"APPLE.COM/BILL 866-712-7753 CA",c:"Apps",a:-4.99},
   {d:"Nov 1",m:"Monthly Maintenance Fee",c:"Bank fee",a:-10.00},
   {d:"Oct 15",m:"TPE — Direct Deposit",c:"Income",a:4000.00},
+  {d:"Oct 7",m:"APPLE.COM/BILL 866-712-7753 CA",c:"Apps",a:-2.99},
   {d:"Oct 1",m:"TPE — Direct Deposit",c:"Income",a:4000.00},
   {d:"Oct 1",m:"Monthly Maintenance Fee",c:"Bank fee",a:-10.00}
  ]
@@ -215,7 +216,7 @@ const hr=()=>{const h=new Date().getHours();return h<12?"Good morning":h<18?"Goo
 const show=(n,sign)=>hide?"••••••":money(n,sign);
 const total=ACCTS.filter(a=>!a.credit).reduce((s,a)=>s+a.bal,0);
 
-function txRows(list){return list.map(t=>`<div class="tx"><div class="ic">${t.m[0]}</div><div class="mid"><div>${t.m}${t.p?'<span class="pending">Pending</span>':''}</div><small>${t.d} · ${t.c}</small></div><div class="a num ${t.a>0?'in':''}">${hide?'••••':money(t.a,true)}</div></div>`).join("")}
+function txRows(list){return list.map(t=>`<div class="tx"><div class="ic">${t.m[0]}</div><div class="mid"><div>${t.m}${t.p?'<span class="pending">Pending</span>':''}</div><small>${t.d}</small></div><div class="a num ${t.a>0?'in':''}">${hide?'••••':money(t.a,true)}</div></div>`).join("")}
 
 function subHeader(title){return `<div class="sub-hero pad"><button class="back" aria-label="Back" onclick="goBack()">${svg("back")}</button><h1>${title}</h1></div>`}
 
@@ -234,7 +235,7 @@ const VIEWS={
     <button class="acct red" style="border-radius:15px 15px 0 0" onclick="push('acct','chk')"><div><div class="nm">Debit Checking</div><div class="sub">••4417</div></div><div class="bal num">${show(ACCTS[0].bal)}<span>Available</span></div></button>
     <button class="row" onclick="toast('Opening a new account is coming soon')" style="color:var(--sky-2);font-weight:600;border-top:1px solid var(--line)">+ Open or link an account<span class="chev">›</span></button>
    </div></div>
-   <div class="sec card"><button class="row" onclick="go('act')"><span><b style="display:block">See transactions</b><small style="color:var(--muted)">Last: App Store · −$4.99</small></span><span class="chev">›</span></button></div>
+   <div class="sec card"><button class="row" onclick="go('act')"><span><b style="display:block">See transactions</b><small style="color:var(--muted)">Last: APPLE.COM/BILL · −$4.99</small></span><span class="chev">›</span></button></div>
   </div>`;
  },
  acct(id){
@@ -242,7 +243,7 @@ const VIEWS={
   return (a.red?subHeader(a.name).replace('class="sub-hero pad"','class="sub-hero pad" style="background:var(--red)"'):subHeader(a.name))+`<div class="pad"><div class="sec card" style="padding:18px">
    <div style="color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em">${a.type}</div>
    <div class="num" style="font-size:32px;font-weight:700;margin-top:4px">${show(a.bal)}</div>
-   <div style="color:var(--muted);font-size:13px;margin-top:6px">${a.credit?`Credit limit ${money(a.limit)} · Payment due Nov 21`:`Account ••${a.mask} · Routing 121000358`}</div>
+   <div style="color:var(--muted);font-size:13px;margin-top:6px">${a.credit?`Credit limit ${money(a.limit)} · Payment due Nov 21`:`Account ••${a.mask}`}</div>
   </div>
   <div class="sec"><h2>Transactions</h2><div class="card">${txRows(TX[id])}</div></div></div>`;
  },
@@ -293,10 +294,10 @@ const VIEWS={
   const spent=TX.chk.filter(t=>t.a<0&&t.d.startsWith("Oct")).reduce((s,t)=>s-t.a,0);
   return `<div class="sub-hero pad"><h1>Activity</h1></div><div class="pad">
    <div class="sec card" style="padding:16px">
-    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>Money in · since Oct 1</span><span>Money out ${hide?"••••":"$24.99"}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>Money in · since Oct 1</span><span>Money out ${hide?"••••":"$27.98"}</span></div>
     <div class="num" style="font-size:26px;font-weight:700;margin:4px 0 10px">${show(8000)}</div>
     <div style="height:8px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:100%;height:100%;background:var(--pos)"></div></div>
-    <div style="display:flex;gap:14px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap"><span>2 deposits from TPE</span><span>Bank fees $20.00</span><span>App Store $4.99</span></div>
+    <div style="display:flex;gap:14px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap"><span>2 deposits from TPE</span><span>Bank fees $20.00</span><span>Apple purchases $7.98</span></div>
    </div>
    <div class="sec"><h2>All transactions</h2><div class="card">${txRows(all)}</div></div></div>`;
  },
