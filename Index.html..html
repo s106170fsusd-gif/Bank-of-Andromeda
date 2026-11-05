@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Bank of Andromeda</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Andromeda">
+<meta name="theme-color" content="#1f2329">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: phone-width app shell — indigo "night sky" header, pale lilac body, fixed tab bar */
+:root{
+  --sky:#1f2329; --sky-2:#2b3038; --nebula:#3a4250; --glow:#b9bec8; --red:#c62f3a;
+  --bg:#f4f5f7; --card:#ffffff; --ink:#1a1d23; --muted:#686e79; --line:#e3e5ea;
+  --pos:#14845a; --neg:#17152e; --warn:#b4531f;
+  --display:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--sky);color:var(--ink);font-family:var(--body);-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sky)}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--nebula);outline-offset:2px}
+.app{max-width:440px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:var(--bg);position:relative;overflow:hidden}
+.screen{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:96px}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums}
+
+/* header */
+.hero{background:var(--sky);color:#fff;padding-block:14px 26px;position:relative;overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.8}
+.topbar{display:flex;align-items:center;justify-content:space-between;position:relative}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:34px;height:34px;border-radius:10px;border:1.5px dashed rgba(255,255,255,.45)}
+.brand b{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.01em}
+.icons{display:flex;gap:6px}
+.ibtn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08);position:relative}
+.ibtn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.8}
+.dot{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--sky)}
+.greet{position:relative;margin-top:22px;font-size:15px;color:var(--glow)}
+.greet strong{display:block;font-family:var(--display);font-size:24px;color:#fff;font-weight:600;margin-top:2px}
+.total{position:relative;margin-top:20px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.total small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--glow)}
+.total .amt{font-size:34px;font-weight:700;margin-top:4px;letter-spacing:-.01em}
+.eye{font-size:13px;color:var(--glow);display:flex;gap:6px;align-items:center;padding:8px 10px;border-radius:20px;background:rgba(255,255,255,.08)}
+
+/* sections */
+.sec{margin-top:18px}
+.sec h2{font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+.sec h2 button{font-family:var(--body);font-size:13px;color:var(--sky-2);font-weight:600;text-decoration:underline}
+.card{background:var(--card);border-radius:16px;border:1px solid var(--line)}
+.acct{display:flex;justify-content:space-between;align-items:center;padding:16px;width:100%;text-align:left}
+.acct+.acct{border-top:1px solid var(--line)}
+.acct.red{background:var(--red);color:#fff}
+.acct.red .sub,.acct.red .bal span{color:rgba(255,255,255,.82)}
+.card>.acct.red:last-child{border-radius:0 0 15px 15px}
+.acct .nm{font-weight:600;font-size:15px}
+.acct .sub{font-size:13px;color:var(--muted);margin-top:2px}
+.acct .bal{font-size:18px;font-weight:600;text-align:right}
+.acct .bal span{display:block;font-family:var(--body);font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+.dcard{display:flex;flex-direction:column;justify-content:space-between;width:100%;max-width:100%;aspect-ratio:1.586;border-radius:18px;padding:18px 20px;color:#fff;text-align:left;background:linear-gradient(140deg,#d63c46 0%,var(--red) 45%,#9e2129 100%);box-shadow:0 10px 24px rgba(198,47,58,.28)}
+.dtop{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;letter-spacing:.12em}
+.dlogo{width:30px;height:30px;border-radius:8px;border:1.5px dashed rgba(255,255,255,.55)}
+.chip{width:40px;height:30px;border-radius:6px;background:linear-gradient(135deg,#f1d9a0,#c9a65a)}
+.dnum{font-size:18px;letter-spacing:.08em}
+.dbot{display:flex;justify-content:space-between;font-size:13px;font-weight:600;letter-spacing:.06em}
+.rew{display:block;width:100%;text-align:left;padding:16px}
+.rew-top{display:flex;justify-content:space-between;align-items:center}
+.rew small{color:var(--muted);font-size:12px}
+.rew .num{font-size:20px;font-weight:700;margin-top:2px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:12px 0 8px}
+.bar i{display:block;height:100%;background:var(--red)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{padding:14px}
+.stat small{font-size:12px;color:var(--muted)}
+.stat .num{font-size:18px;font-weight:700;margin-top:4px}
+.stat .in{color:var(--pos)}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:18px}
+.q{padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.q svg{width:44px;height:44px;padding:11px;border-radius:50%;background:var(--card);border:1px solid var(--line);stroke:var(--sky-2);fill:none;stroke-width:1.8}
+.tx{display:flex;align-items:center;gap:12px;padding:13px 16px}
+.tx+.tx{border-top:1px solid var(--line)}
+.tx .ic{width:38px;height:38px;border-radius:12px;background:var(--bg);display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:14px;color:var(--sky-2);flex:none}
+.tx .mid{flex:1;min-width:0}
+.tx .mid div{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx .mid small{color:var(--muted);font-size:12px}
+.tx .a{font-weight:600;font-size:14px}
+.tx .a.in{color:var(--pos)}
+.pending{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:#fbeee6;border-radius:6px;padding:2px 6px;margin-left:6px;vertical-align:1px}
+.promo{display:flex;gap:14px;align-items:center;padding:16px;background:var(--sky-2);color:#fff;border-radius:16px;width:100%;text-align:left}
+.promo .orb{width:40px;height:40px;border-radius:50%;flex:none;background:rgba(255,255,255,.14)}
+.promo b{font-family:var(--display);font-size:15px}
+.promo small{display:block;color:var(--glow);font-size:13px;margin-top:2px}
+.score{display:flex;align-items:center;gap:14px;padding:16px}
+.ring{width:64px;height:64px;flex:none}
+
+/* subpage header */
+.sub-hero{background:var(--sky);color:#fff;padding-block:14px 18px;display:flex;align-items:center;gap:10px}
+.sub-hero h1{font-family:var(--display);font-size:18px;font-weight:600;margin:0;flex:1}
+.back svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2}
+
+/* forms */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.field input,.field select{font:inherit;font-size:16px;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btn{width:100%;padding:15px;border-radius:14px;background:var(--sky-2);color:#fff;font-weight:700;font-size:16px}
+.btn.ghost{background:transparent;color:var(--sky-2);border:1.5px solid var(--line)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--line);border-radius:12px;padding:3px;margin-bottom:16px}
+.seg button{padding:10px;border-radius:10px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(23,21,46,.12)}
+
+/* AI chat */
+.chat{display:flex;flex-direction:column;gap:10px;padding-block:16px}
+.msg{max-width:84%;padding:11px 14px;border-radius:18px;font-size:15px;line-height:1.45}
+.msg.bot{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:6px;align-self:flex-start}
+.msg.me{background:var(--sky-2);color:#fff;border-bottom-right-radius:6px;align-self:flex-end}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-block:4px 10px}
+.chips button{flex:none;font-size:13px;font-weight:600;padding:8px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--sky-2)}
+.composer{position:absolute;left:0;right:0;bottom:calc(68px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line);padding-block:10px;display:flex;gap:8px}
+.composer input{flex:1;min-width:0;font:inherit;font-size:16px;padding:12px 14px;border-radius:22px;border:1px solid var(--line);background:var(--card)}
+.composer button{width:44px;height:44px;border-radius:50%;background:var(--sky-2);display:grid;place-items:center;flex:none}
+.composer svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2}
+.typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin:0 2px;animation:b 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+/* menu list */
+.row{display:flex;justify-content:space-between;align-items:center;padding:15px 16px;width:100%;text-align:left;font-size:15px;font-weight:500}
+.row+.row{border-top:1px solid var(--line)}
+.row .chev{color:var(--muted)}
+.toggle{width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;transition:background .2s;flex:none}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .2s}
+.toggle.on{background:var(--pos)}.toggle.on::after{left:21px}
+
+/* tab bar */
+.tabs{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 12px;font-size:11px;font-weight:600;color:var(--muted)}
+.tab svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8}
+.tab.on{color:var(--sky-2)}
+.tab.ai .bub{width:46px;height:46px;margin-top:-22px;border-radius:50%;display:grid;place-items:center;background:var(--sky-2);box-shadow:0 4px 12px rgba(0,0,0,.25);border:3px solid var(--card)}
+.tab.ai .bub svg{stroke:#fff}
+
+/* sheet / toast */
+.scrim{position:absolute;inset:0;background:rgba(20,18,58,.45);z-index:20;display:flex;align-items:flex-end}
+.sheet{background:var(--card);width:100%;border-radius:22px 22px 0 0;padding-block:20px calc(24px + env(safe-area-inset-bottom,0px))}
+.sheet h3{font-family:var(--display);margin:0 0 6px;font-size:18px}
+.sheet p{color:var(--muted);margin:0 0 18px;line-height:1.5}
+.sheet .sumrow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.sheet .btns{display:grid;gap:10px;margin-top:18px}
+.toast{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;font-weight:600;z-index:30;white-space:nowrap}
+.check{width:64px;height:64px;border-radius:50%;background:#e3f4ec;display:grid;place-items:center;margin:0 auto 14px}
+.check svg{width:30px;height:30px;stroke:var(--pos);fill:none;stroke-width:2.5}
+.center{text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:0}body{margin:0;font-size:14px}</style>
+</head>
+<body>
+<div class="app" id="app">
+  <main class="screen" id="screen"></main>
+  <nav class="tabs" id="tabs"></nav>
+</div>
+
+<script>
+const USER={first:"William",full:"William A. Guzman"};
+const ACCTS=[
+  {id:"chk",name:"Debit Checking",mask:"4417",bal:28147.62,type:"Available",red:true}
+];
+const TX={
+ chk:[
+  {d:"Nov 3",m:"App Store",c:"Apps",a:-4.99},
+  {d:"Nov 1",m:"Monthly Maintenance Fee",c:"Bank fee",a:-10.00},
+  {d:"Oct 15",m:"TPE — Direct Deposit",c:"Income",a:4000.00},
+  {d:"Oct 1",m:"TPE — Direct Deposit",c:"Income",a:4000.00},
+  {d:"Oct 1",m:"Monthly Maintenance Fee",c:"Bank fee",a:-10.00}
+ ]
+};
+const BILLS=[
+  {n:"Oakridge Apts",due:"Dec 1",a:1650.00},
+  {n:"PG&E",due:"Nov 28",a:121.06},
+  {n:"T-Mobile",due:"Nov 24",a:75.00}
+];
+const ICON={
+ home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+ pay:'<path d="M7 7h13l-4-4M17 17H4l4 4"/>',
+ ai:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+ act:'<path d="M4 6h16M4 12h16M4 18h10"/>',
+ menu:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+ bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ msg:'<path d="M4 5h16v11H8l-4 4z"/>',
+ back:'<path d="M15 5l-7 7 7 7"/>',
+ send:'<path d="M4 12l16-8-6 16-2-7z"/>',
+ zelle:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ bill:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+ dep:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'
+};
+const svg=(k)=>`<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+const money=(n,sign)=>{const s=Math.abs(n).toLocaleString("en-US",{style:"currency",currency:"USD"});return sign?(n<0?"−"+s:"+"+s):s};
+let hide=false, tab="home", stack=[], chat=[
+ {who:"bot",t:"Hi William, I'm your Andromeda assistant. Ask me about your spending, balances, or upcoming bills."}
+];
+try{hide=localStorage.getItem("boa-hide")==="1"}catch(e){}
+const $=s=>document.querySelector(s);
+const scr=$("#screen");
+const hr=()=>{const h=new Date().getHours();return h<12?"Good morning":h<18?"Good afternoon":"Good evening"};
+const show=(n,sign)=>hide?"••••••":money(n,sign);
+const total=ACCTS.filter(a=>!a.credit).reduce((s,a)=>s+a.bal,0);
+
+function txRows(list){return list.map(t=>`<div class="tx"><div class="ic">${t.m[0]}</div><div class="mid"><div>${t.m}${t.p?'<span class="pending">Pending</span>':''}</div><small>${t.d} · ${t.c}</small></div><div class="a num ${t.a>0?'in':''}">${hide?'••••':money(t.a,true)}</div></div>`).join("")}
+
+function subHeader(title){return `<div class="sub-hero pad"><button class="back" aria-label="Back" onclick="goBack()">${svg("back")}</button><h1>${title}</h1></div>`}
+
+const VIEWS={
+ home(){
+  const recent=[...TX.chk.slice(0,4)];
+  return `<header class="hero pad">
+   <div class="topbar"><div class="brand"><div class="logo" aria-hidden="true"></div><b>Bank of Andromeda</b></div>
+   <div class="icons"><button class="ibtn" aria-label="Search" onclick="push('search')"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="ibtn" aria-label="Messages" onclick="push('inbox')">${svg("msg")}</button><button class="ibtn" aria-label="Alerts" onclick="push('alerts')">${svg("bell")}<i class="dot"></i></button></div></div>
+   <div class="greet">${hr()},<strong>${USER.first}</strong></div>
+   <div class="total"><div><small>Available balance</small><div class="amt num">${show(total)}</div></div>
+   <button class="eye" onclick="toggleHide()">${hide?"Show":"Hide"} balances</button></div>
+  </header>
+  <div class="pad">
+   <div class="sec"><h2>Accounts</h2><div class="card">
+    <button class="acct red" style="border-radius:15px 15px 0 0" onclick="push('acct','chk')"><div><div class="nm">Debit Checking</div><div class="sub">••4417</div></div><div class="bal num">${show(ACCTS[0].bal)}<span>Available</span></div></button>
+    <button class="row" onclick="toast('Opening a new account is coming soon')" style="color:var(--sky-2);font-weight:600;border-top:1px solid var(--line)">+ Open or link an account<span class="chev">›</span></button>
+   </div></div>
+   <div class="sec card"><button class="row" onclick="go('act')"><span><b style="display:block">See transactions</b><small style="color:var(--muted)">Last: App Store · −$4.99</small></span><span class="chev">›</span></button></div>
+  </div>`;
+ },
+ acct(id){
+  const a=ACCTS.find(x=>x.id===id);
+  return (a.red?subHeader(a.name).replace('class="sub-hero pad"','class="sub-hero pad" style="background:var(--red)"'):subHeader(a.name))+`<div class="pad"><div class="sec card" style="padding:18px">
+   <div style="color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em">${a.type}</div>
+   <div class="num" style="font-size:32px;font-weight:700;margin-top:4px">${show(a.bal)}</div>
+   <div style="color:var(--muted);font-size:13px;margin-top:6px">${a.credit?`Credit limit ${money(a.limit)} · Payment due Nov 21`:`Account ••${a.mask} · Routing 121000358`}</div>
+  </div>
+  <div class="sec"><h2>Transactions</h2><div class="card">${txRows(TX[id])}</div></div></div>`;
+ },
+ pay(){
+  return `<div class="sub-hero pad"><h1>Pay &amp; Transfer</h1></div><div class="pad">
+   <div class="sec card">
+    <button class="row" onclick="push('transfer')">Transfer to another bank<span class="chev">›</span></button>
+    <button class="row" onclick="push('zelle')">Send money to someone<span class="chev">›</span></button>
+    <button class="row" onclick="push('deposit')">Deposit a check<span class="chev">›</span></button>
+   </div>
+   <div class="sec"><h2>Upcoming bills</h2><div class="card">
+    ${BILLS.map(b=>`<div class="tx"><div class="ic">${b.n[0]}</div><div class="mid"><div>${b.n}</div><small>Due ${b.due}</small></div><button class="a num" style="color:var(--sky-2)" onclick="payBill('${b.n}',${b.a})">${money(b.a)} ›</button></div>`).join("")}
+   </div></div></div>`;
+ },
+ transfer(){
+  return subHeader("Transfer")+`<form class="pad sec" onsubmit="event.preventDefault();confirmMove('Transfer',document.getElementById('t-amt').value,document.getElementById('t-to').selectedOptions[0].text)">
+   <div class="field"><label for="t-from">From</label><select id="t-from"><option>Debit Checking ••4417</option></select></div>
+   <div class="field"><label for="t-to">To</label><select id="t-to"><option>External account ••7731</option><option>Add an external account</option></select></div>
+   <div class="field"><label for="t-amt">Amount</label><input id="t-amt" inputmode="decimal" placeholder="$0.00" value="250.00"></div>
+   <div class="field"><label for="t-date">Date</label><input id="t-date" value="Today"></div>
+   <button class="btn" type="submit">Review transfer</button></form>`;
+ },
+ zelle(){
+  return subHeader("Send money")+`<form class="pad sec" onsubmit="event.preventDefault();confirmMove('Send',document.getElementById('z-amt').value,document.getElementById('z-to').value||'recipient')">
+   <div class="seg"><button type="button" class="on">Send</button><button type="button" onclick="toast('Requests coming soon')">Request</button></div>
+   <div class="field"><label for="z-to">To</label><input id="z-to" placeholder="Name, email or mobile" value="Marco R."></div>
+   <div class="field"><label for="z-amt">Amount</label><input id="z-amt" inputmode="decimal" placeholder="$0.00" value="40.00"></div>
+   <div class="field"><label for="z-memo">Memo</label><input id="z-memo" placeholder="What's it for?" value="Tacos 🌮"></div>
+   <button class="btn" type="submit">Review</button></form>`;
+ },
+ deposit(){
+  return subHeader("Deposit a check")+`<div class="pad sec">
+   <div class="card" style="padding:28px 16px;text-align:center;border-style:dashed;color:var(--muted)">Front of check<br><small>Tap to take photo</small></div>
+   <div class="card" style="padding:28px 16px;text-align:center;border-style:dashed;color:var(--muted);margin-top:12px">Back of check<br><small>Sign and write "For mobile deposit only"</small></div>
+   <div class="field" style="margin-top:16px"><label for="d-amt">Amount</label><input id="d-amt" inputmode="decimal" placeholder="$0.00"></div>
+   <button class="btn" onclick="toast('Add photos of both sides first')">Continue</button></div>`;
+ },
+ ai(){
+  return `<div class="sub-hero pad"><div class="promo" style="background:none;padding:0;gap:10px"><div class="orb" style="width:32px;height:32px"></div></div><h1>Assistant</h1></div>
+   <div class="pad"><div class="chat" id="chat">${chat.map(m=>`<div class="msg ${m.who}">${m.t}</div>`).join("")}</div>
+   <div class="chips">${["How much did I spend?","When is rent due?","What\'s my balance?","Any unusual charges?"].map(q=>`<button onclick="ask('${q}')">${q}</button>`).join("")}</div>
+   <div style="height:70px"></div></div>
+   <form class="composer pad" onsubmit="event.preventDefault();const i=document.getElementById('ai-in');if(i.value.trim()){ask(i.value.trim());i.value=''}">
+    <input id="ai-in" placeholder="Ask a question" autocomplete="off"><button aria-label="Send">${svg("send")}</button></form>`;
+ },
+ act(){
+  const all=TX.chk;
+  const spent=TX.chk.filter(t=>t.a<0&&t.d.startsWith("Oct")).reduce((s,t)=>s-t.a,0);
+  return `<div class="sub-hero pad"><h1>Activity</h1></div><div class="pad">
+   <div class="sec card" style="padding:16px">
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>Money in · since Oct 1</span><span>Money out ${hide?"••••":"$24.99"}</span></div>
+    <div class="num" style="font-size:26px;font-weight:700;margin:4px 0 10px">${show(8000)}</div>
+    <div style="height:8px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:100%;height:100%;background:var(--pos)"></div></div>
+    <div style="display:flex;gap:14px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap"><span>2 deposits from TPE</span><span>Bank fees $20.00</span><span>App Store $4.99</span></div>
+   </div>
+   <div class="sec"><h2>All transactions</h2><div class="card">${txRows(all)}</div></div></div>`;
+ },
+ menu(){
+  return `<div class="sub-hero pad"><h1>Profile</h1></div><div class="pad">
+   <div class="sec card" style="padding:16px;display:flex;gap:14px;align-items:center">
+    <div style="width:52px;height:52px;border-radius:50%;background:var(--sky-2);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:18px">WG</div>
+    <div><div style="font-weight:700;font-size:17px">${USER.full}</div><div style="color:var(--muted);font-size:13px">Member since 2019 · Preferred</div></div></div>
+   <div class="sec"><h2>Security</h2><div class="card">
+    <div class="row">Face ID sign-in<button class="toggle on" aria-label="Face ID" onclick="this.classList.toggle('on')"></button></div>
+    <div class="row">Lock debit card<button class="toggle" aria-label="Lock card" onclick="this.classList.toggle('on');toast(this.classList.contains('on')?'Card locked':'Card unlocked')"></button></div>
+    <button class="row" onclick="push('alerts')">Alerts<span class="chev">›</span></button>
+   </div></div>
+   <div class="sec"><h2>Help</h2><div class="card">
+    <button class="row" onclick="go('ai')">Chat with the Assistant<span class="chev">›</span></button>
+    <button class="row" onclick="toast('Statements: Oct, Sep, Aug ready')">Statements &amp; documents<span class="chev">›</span></button>
+    <button class="row" onclick="toast('Signed out')" style="color:var(--warn)">Sign out</button>
+   </div></div></div>`;
+ },
+ search(){
+  setTimeout(()=>{const i=document.getElementById('s-in');if(i){i.focus();i.oninput=()=>{const q=i.value.toLowerCase();document.getElementById('s-res').innerHTML=q?txRows(TX.chk.filter(t=>(t.m+' '+t.c).toLowerCase().includes(q)))||'<div class="row" style="color:var(--muted)">No matches</div>':''}}},0);
+  return subHeader("Search")+`<div class="pad sec"><div class="field"><label for="s-in">Search transactions and help</label><input id="s-in" placeholder="Try \"gas\" or \"rent\"" autocomplete="off"></div><div class="card" id="s-res"></div></div>`;
+ },
+ alerts(){
+  return subHeader("Alerts")+`<div class="pad sec card">
+   <div class="tx"><div class="ic">$</div><div class="mid"><div>Direct deposit received</div><small>Oct 15 · $4,000.00 from TPE</small></div></div>
+   <div class="tx"><div class="ic">!</div><div class="mid"><div>Monthly maintenance fee</div><small>Nov 1 · $10.00 from Checking</small></div></div>
+   <div class="tx"><div class="ic">★</div><div class="mid"><div>Credit score went up</div><small>Oct 30 · Now 748</small></div></div></div>`;
+ },
+ inbox(){
+  return subHeader("Messages")+`<div class="pad sec card">
+   <div class="tx"><div class="ic">A</div><div class="mid"><div>Your October statement is ready</div><small>Nov 2 · Bank of Andromeda</small></div></div>
+   <div class="tx"><div class="ic">A</div><div class="mid"><div>New card controls are available</div><small>Oct 15 · Bank of Andromeda</small></div></div></div>`;
+ }
+};
+
+const TABS=[["home","Home","home"],["pay","Pay","pay"],["ai","Assistant","ai"],["act","Activity","act"],["menu","Profile","menu"]];
+function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,l,i])=>k==="ai"
+  ?`<button class="tab ai ${tab===k?'on':''}" onclick="go('ai')"><span class="bub">${svg(i)}</span>${l}</button>`
+  :`<button class="tab ${tab===k&&!stack.length?'on':''}" onclick="go('${k}')">${svg(i)}${l}</button>`).join("")}
+function render(){
+  const top=stack[stack.length-1];
+  scr.innerHTML=top?VIEWS[top.v](top.arg):VIEWS[tab]();
+  scr.scrollTop=0;renderTabs();
+  if(!top&&tab==="ai"){const c=$("#chat");c&&c.lastElementChild&&c.lastElementChild.scrollIntoView({block:"end"})}
+}
+function go(t){tab=t;stack=[];render()}
+function push(v,arg){stack.push({v,arg});render()}
+function goBack(){stack.pop();render()}
+function toggleHide(){hide=!hide;try{localStorage.setItem("boa-hide",hide?"1":"0")}catch(e){};render()}
+function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;$("#app").appendChild(d);setTimeout(()=>d.remove(),2200)}
+
+function sheet(html){const s=document.createElement("div");s.className="scrim";s.innerHTML=`<div class="sheet pad">${html}</div>`;s.onclick=e=>{if(e.target===s)s.remove()};$("#app").appendChild(s);return s}
+function confirmMove(kind,amt,to){
+  const n=parseFloat(String(amt).replace(/[^0-9.]/g,""))||0;
+  if(!n){toast("Enter an amount");return}
+  const s=sheet(`<h3>Review ${kind.toLowerCase()}</h3><p>Check the details before you continue.</p>
+   <div class="sumrow"><span>To</span><b>${to}</b></div><div class="sumrow"><span>Amount</span><b class="num">${money(n)}</b></div><div class="sumrow"><span>When</span><b>Today</b></div>
+   <div class="btns"><button class="btn" id="ok">${kind} ${money(n)}</button><button class="btn ghost" id="cx">Cancel</button></div>`);
+  s.querySelector("#cx").onclick=()=>s.remove();
+  s.querySelector("#ok").onclick=()=>{s.querySelector(".sheet").innerHTML=`<div class="center"><div class="check">${svg("send").replace(ICON.send,'<path d="M5 12l5 5 9-10"/>')}</div><h3>All set</h3><p>${money(n)} to ${to}. Confirmation #AB${Math.floor(Math.random()*9e6+1e6)}</p><button class="btn" id="done">Done</button></div>`;
+   s.querySelector("#done").onclick=()=>{s.remove();stack=[];tab="home";render()}};
+}
+function payBill(n,a){confirmMove("Pay",a,n)}
+
+const ANSWERS=[
+ [/spend|spent|spending/i,"This month you've spent $14.99: the $10.00 monthly fee and $4.99 at the App Store. Your last deposit was $4,000.00 from TPE on Oct 15."],
+ [/rent|due|bill/i,"Rent to Oakridge Apts ($1,650.00) is due Dec 1. PG&E ($121.06) is due Nov 28."],
+ [/unusual|fraud|weird|charge/i,"Nothing unusual. Your recent charges are the monthly maintenance fee and an App Store purchase."],
+ [/balance|how much.*(have|got)|total/i,"Your Debit Checking account has $28,147.62 available."],
+ [/hi|hello|hey/i,"Hey William! What can I help with today?"]
+];
+function ask(q){
+  chat.push({who:"me",t:q});
+  const a=(ANSWERS.find(([r])=>r.test(q))||[0,"I can help with balances, spending, bills and transfers. Try asking about one of those."])[1];
+  render();
+  const c=$("#chat");const t=document.createElement("div");t.className="msg bot typing";t.innerHTML="<span></span><span></span><span></span>";c.appendChild(t);t.scrollIntoView({block:"end"});
+  setTimeout(()=>{chat.push({who:"bot",t:a});if(tab==="ai"&&!stack.length)render()},900);
+}
+
+function stars(){
+  const c=$("#stars");if(!c)return;const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;
+  c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
+  let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  for(let i=0;i<70;i++){x.fillStyle=`rgba(255,255,255,${.25+rnd()*.6})`;x.beginPath();x.arc(rnd()*r.width,rnd()*r.height,rnd()*1.3+.2,0,7);x.fill()}
+}
+render();
+</script>
+
+</body>
+</html>
