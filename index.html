@@ -7,7 +7,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Andromeda">
 <meta name="theme-color" content="#1f2329">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--nebula);outline-offset:2px}
 .app{position:fixed;top:0;left:0;right:0;bottom:0;padding-top:env(safe-area-inset-top,0px);max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
 .app>.screen{background:var(--bg)}
-.screen{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:96px}
+.screen{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:130px}
 .pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .num{font-family:var(--display);font-variant-numeric:tabular-nums}
 
@@ -183,7 +183,7 @@ const TX={
  chk:[
   {d:"Nov 3",m:"APPLE.COM/BILL 866-712-7753 CA",c:"Apps",a:-4.99},
   {d:"Nov 1",m:"Monthly Maintenance Fee",c:"Bank fee",a:-10.00},
-  {d:"Oct 15",m:"TPE — Direct Deposit",c:"Income",a:4000.00},
+  {d:"Oct 15",m:"TPE — Direct Deposit",c:"Income",a:2000.00},
   {d:"Oct 7",m:"APPLE.COM/BILL 866-712-7753 CA",c:"Apps",a:-2.99},
   {d:"Oct 1",m:"TPE — Direct Deposit",c:"Income",a:4000.00},
   {d:"Oct 1",m:"Monthly Maintenance Fee",c:"Bank fee",a:-10.00}
@@ -244,6 +244,12 @@ const VIEWS={
     <button class="row" onclick="toast('Opening a new account is coming soon')" style="color:var(--sky-2);font-weight:600;border-top:1px solid var(--line)">+ Open or link an account<span class="chev">›</span></button>
    </div></div>
    <div class="sec card"><button class="row" onclick="go('act')"><span><b style="display:block">See recent transactions</b><small style="color:var(--muted)">Last: APPLE.COM/BILL · −$4.99</small></span><span class="chev">›</span></button></div>
+   <div class="sec"><h2>Since Oct 1</h2><div class="stats">
+    <div class="card stat"><small>Money in</small><div class="num in">${hide?'••••':'+$6,000.00'}</div></div>
+    <div class="card stat"><small>Money out</small><div class="num">${hide?'••••':'−$27.98'}</div></div>
+   </div></div>
+   <div class="sec card"><button class="row" onclick="push('offers')"><b>Offers for you</b><span class="chev">›</span></button></div>
+   <div class="sec card"><button class="row" onclick="push('rewards')"><b>My Rewards</b><span class="chev">›</span></button></div>
   </div>`;
  },
  acct(id){
@@ -303,7 +309,7 @@ const VIEWS={
   return `<div class="sub-hero pad"><h1>Activity</h1></div><div class="pad">
    <div class="sec card" style="padding:16px">
     <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>Money in · since Oct 1</span><span>Money out ${hide?"••••":"$27.98"}</span></div>
-    <div class="num" style="font-size:26px;font-weight:700;margin:4px 0 10px">${show(8000)}</div>
+    <div class="num" style="font-size:26px;font-weight:700;margin:4px 0 10px">${show(6000)}</div>
     <div style="height:8px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:100%;height:100%;background:var(--pos)"></div></div>
     <div style="display:flex;gap:14px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap"><span>2 deposits from TPE</span><span>Bank fees $20.00</span><span>Apple purchases $7.98</span></div>
    </div>
@@ -329,9 +335,27 @@ const VIEWS={
   setTimeout(()=>{const i=document.getElementById('s-in');if(i){i.focus();i.oninput=()=>{const q=i.value.toLowerCase();document.getElementById('s-res').innerHTML=q?txRows(TX.chk.filter(t=>(t.m+' '+t.c).toLowerCase().includes(q)))||'<div class="row" style="color:var(--muted)">No matches</div>':''}}},0);
   return subHeader("Search")+`<div class="pad sec"><div class="field"><label for="s-in">Search transactions and help</label><input id="s-in" placeholder="Try \"gas\" or \"rent\"" autocomplete="off"></div><div class="card" id="s-res"></div></div>`;
  },
+ offers(){
+  return subHeader("Offers for you")+`<div class="pad sec card">
+    <button class="row" onclick="toast('Offer added to your debit card')"><span><b style="display:block">5% back at Chevron</b><small style="color:var(--muted)">Up to $15 · ends Nov 30</small></span><span class="chev">Add ›</span></button>
+    <button class="row" onclick="toast('Offer added to your debit card')"><span><b style="display:block">10% back at Chipotle</b><small style="color:var(--muted)">Up to $8 · ends Dec 15</small></span><span class="chev">Add ›</span></button>
+    <button class="row" onclick="toast('Offer added to your debit card')"><span><b style="display:block">$5 back on $25+ at Target</b><small style="color:var(--muted)">One time · ends Dec 1</small></span><span class="chev">Add ›</span></button>
+  </div>`;
+ },
+ rewards(){
+  return subHeader("My Rewards")+`<div class="pad"><div class="sec card rew"><small>Available points</small><div class="num" style="font-size:30px">3,240</div><div class="bar"><i style="width:65%"></i></div><small>1,760 pts to your next $25 reward · worth $32.40 now</small></div>
+   <div class="sec"><h2>Redeem</h2><div class="card">
+    <button class="row" onclick="toast('$32.40 sent to Debit Checking')">Cash back to checking<span class="chev">$32.40 ›</span></button>
+    <button class="row" onclick="toast('Gift cards coming soon')">Gift cards<span class="chev">›</span></button>
+   </div></div>
+   <div class="sec"><h2>Recent points</h2><div class="card">
+    <div class="tx"><div class="ic">A</div><div class="mid"><div>APPLE.COM/BILL</div><small>Nov 3</small></div><div class="a num in">+5</div></div>
+    <div class="tx"><div class="ic">A</div><div class="mid"><div>APPLE.COM/BILL</div><small>Oct 7</small></div><div class="a num in">+3</div></div>
+   </div></div></div>`;
+ },
  alerts(){
   return subHeader("Alerts")+`<div class="pad sec card">
-   <div class="tx"><div class="ic">$</div><div class="mid"><div>Direct deposit received</div><small>Oct 15 · $4,000.00 from TPE</small></div></div>
+   <div class="tx"><div class="ic">$</div><div class="mid"><div>Direct deposit received</div><small>Oct 15 · $2,000.00 from TPE</small></div></div>
    <div class="tx"><div class="ic">!</div><div class="mid"><div>Monthly maintenance fee</div><small>Nov 1 · $10.00 from Checking</small></div></div>
    <div class="tx"><div class="ic">★</div><div class="mid"><div>Credit score went up</div><small>Oct 30 · Now 748</small></div></div></div>`;
  },
@@ -372,7 +396,7 @@ function confirmMove(kind,amt,to){
 function payBill(n,a){confirmMove("Pay",a,n)}
 
 const ANSWERS=[
- [/spend|spent|spending/i,"This month you've spent $14.99: the $10.00 monthly fee and $4.99 at the App Store. Your last deposit was $4,000.00 from TPE on Oct 15."],
+ [/spend|spent|spending/i,"This month you've spent $14.99: the $10.00 monthly fee and $4.99 at the App Store. Your last deposit was $2,000.00 from TPE on Oct 15."],
  [/rent|due|bill/i,"Rent to Oakridge Apts ($1,650.00) is due Dec 1. PG&E ($121.06) is due Nov 28."],
  [/unusual|fraud|weird|charge/i,"Nothing unusual. Your recent charges are the monthly maintenance fee and an App Store purchase."],
  [/balance|how much.*(have|got)|total/i,"Your Debit Checking account has $28,147.62 available."],
